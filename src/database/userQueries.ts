@@ -1,10 +1,9 @@
 import dynamodb from "./db";
-
-const tableName: string = "users";
+import {USERTABLENAME} from "../config/config";
 
 const createUser = async (id: string, email: string, password: string) => {
      await dynamodb.put({
-        TableName: tableName,
+        TableName: USERTABLENAME,
         Item: {
             ID: id,
             email: email,
@@ -17,7 +16,7 @@ const createUser = async (id: string, email: string, password: string) => {
 
 // const getUserById = async (id: string) => {
 //     const { Item } = await dynamodb.get({
-//         TableName: tableName,
+//         TableName: USERTABLENAME,
 //         Key: {
 //             "ID": id
 //         }
@@ -27,7 +26,7 @@ const createUser = async (id: string, email: string, password: string) => {
 
 const getUserByEmail = async (email: string) => {
     const { Item } = await dynamodb.get({
-        TableName: tableName,
+        TableName: USERTABLENAME,
         Key: {
             "email": email
         }

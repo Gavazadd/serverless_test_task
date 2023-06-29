@@ -6,6 +6,7 @@ provider:
     userTableName: ${self:custom.userTableName}
     linkTableName: ${self:custom.linkTableName}
     tokensTableName: ${self:custom.tokensTableName}
+
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -16,6 +17,8 @@ custom:
   userTableName: users
   linkTableName: links
   tokensTableName: tokens
+  REFRESH_SECRET_KEY: REFRESH_SECRET_KEY
+  ACCESS_SECRET_KEY: ACCESS_SECRET_KEY
 
 functions:
   app:

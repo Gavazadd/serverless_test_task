@@ -1,10 +1,9 @@
 import dynamodb from "./db";
-
-const tableName: string = "tokens";
+import {TOKENTABLENAME} from "../config/config";
 
 const createTokens = async (id: string, accessToken: string, refreshToken: string) => {
     await dynamodb.put({
-        TableName: tableName,
+        TableName: TOKENTABLENAME,
         Item: {
             userId: id,
             accessToken: accessToken,
@@ -17,7 +16,7 @@ const createTokens = async (id: string, accessToken: string, refreshToken: strin
 
 const getTokens = async (id: string) => {
     const { Item } = await dynamodb.get({
-        TableName: tableName,
+        TableName: TOKENTABLENAME,
         Key: {
             "userId": id
         }

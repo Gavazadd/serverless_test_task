@@ -1,12 +1,10 @@
 require('dotenv').config()
 import express, {Express} from 'express';
 import serverless from 'serverless-http';
-const cors = require('cors')
-const cookieParser = require('cookie-parser')
-
+import cors from "cors"
+import cookieParser from "cookie-parser"
+import {PORT} from "./config/config";
 import routes from './routes';
-
-const PORT: string | 5000 = process.env.PORT || 5000
 
 const app: Express = express()
 app.use(cookieParser());
