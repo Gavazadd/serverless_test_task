@@ -1,14 +1,14 @@
 require('dotenv').config()
-import express from 'express';
+import express, {Express} from 'express';
 import serverless from 'serverless-http';
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
 import routes from './routes';
 
-const PORT = process.env.PORT || 5000
+const PORT: string | 5000 = process.env.PORT || 5000
 
-const app = express()
+const app: Express = express()
 app.use(cookieParser());
 app.use(cors())
 
@@ -27,4 +27,4 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 app.listen(PORT, async () => {
     console.log("Server is listening port: 5000");
 });
-export const handler = serverless(app);
+export const handler: serverless.Handler = serverless(app);

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const linksController = require('../../controllers/linksController')
 
-const router = Router();
+const router : Router = Router();
 
 router.get('/', linksController.getAll);
 

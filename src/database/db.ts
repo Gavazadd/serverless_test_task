@@ -1,9 +1,8 @@
-import * as AWS from "aws-sdk";
+import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { DynamoDB } from "@aws-sdk/client-dynamodb";
 
-AWS.config.update({
-    region: "us-east-1"
-});
+const region = "us-east-1";
+ const dynamodb: DynamoDBDocument = DynamoDBDocument.from(new DynamoDB({ region }));
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+export default dynamodb;
 
-export {dynamodb};

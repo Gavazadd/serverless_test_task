@@ -3,16 +3,19 @@ provider:
   name: aws
   runtime: nodejs18.x
   environment:
-    tableName: ${self:custom.tableName}
+    userTableName: ${self:custom.userTableName}
+    linkTableName: ${self:custom.linkTableName}
+    tokensTableName: ${self:custom.tokensTableName}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
       Resource: '*'
 
-
 custom:
-  tableName: users
+  userTableName: users
+  linkTableName: links
+  tokensTableName: tokens
 
 functions:
   app:
@@ -26,11 +29,64 @@ resources:
     UserTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.tableName}
+        TableName: ${self:custom.userTableName}
         AttributeDefinitions:
-          - AttributeName: ID
+          - AttributeName: email
             AttributeType: S
         KeySchema:
-          - AttributeName: ID
+          - AttributeName: email
             KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    LinksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.linkTableName}
+        AttributeDefinitions:
+          - AttributeName: linkId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: linkId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: UserIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+    TokensTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tokensTableName}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: refreshToken
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: RefreshIndex
+            KeySchema:
+              - AttributeName: refreshToken
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

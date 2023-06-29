@@ -5,8 +5,10 @@ const userService = require('../services/userAuthService')
 class UserAuthController {
     async registration(req: Request, res: Response, next: NextFunction) {
         try{
-            const userData = await userService.registration()
-            res.json(userData)
+            const {email, password} = req.body;
+            const userData = await userService.registration(email, password)
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData)
         }catch (e) {
             next(e)
         }
@@ -14,13 +16,14 @@ class UserAuthController {
 
     async login(req: Request, res: Response, next: NextFunction) {
         try{
-            const userData = await userService.login()
+            const {email, password} = req.body;
+            const userData = await userService.login(email, password)
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(userData)
         }catch (e) {
             next(e)
         }
     }
 }
-
 
 module.exports = new UserAuthController();
