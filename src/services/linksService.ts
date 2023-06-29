@@ -17,7 +17,20 @@ class LinksService {
         return shortenedUrl
     }
     async getAll (userId:string){
-
+        const shortenedUrl:ScanCommandOutput = await getAllLinks()
+        let userUrls = []
+        if (!shortenedUrl.Items || shortenedUrl.Items.length === 0){
+            return new ApiError(`No items in table the "links"`, 400)
+        }
+        for (let item of shortenedUrl.Items){
+            if (item.userId.toString() === userId){
+                userUrls.push(`${API_URL}`+ item['shortUrl'])
+            }
+        }
+        if (!(userUrls.length > 0)){
+            return new ApiError(`User with this ID haven't got any shorted links`, 400)
+        }
+        return userUrls
     }
 
     async getUrl(shortUrl:string){
