@@ -1,6 +1,6 @@
 import shortid from 'shortid';
 import {ApiError} from "../error";
-import {createLink, getAllLinks, getLink} from "../database/linkQueries";
+import {createLink, getAllLinks, getLink, updateLink} from "../database/linkQueries";
 import {v4 as uuidv4} from "uuid";
 import {ScanCommandOutput} from "@aws-sdk/client-dynamodb";
 import {API_URL} from "../config/config";
@@ -34,7 +34,13 @@ class LinksService {
     }
 
     async getUrl(shortUrl:string){
-
+        const urlItem = await getLink(shortUrl)
+        if (!urlItem){
+            return new ApiError(`This link is not available"`, 400)
+        }
+        const counter = Number(urlItem['counter']) + 1
+        const updateUrl = await  createLink(urlItem['linkId'], urlItem['origUrl'],urlItem['shortUrl'], `${counter}`, urlItem['userId'])
+        return urlItem.origUrl
     }
 
     async delete(linkId: string) {

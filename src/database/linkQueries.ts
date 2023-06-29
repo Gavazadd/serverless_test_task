@@ -1,6 +1,5 @@
 import dynamodb from "./db";
 import {LINKTABLENAME} from "../config/config";
-import {QueryCommandOutput} from "@aws-sdk/lib-dynamodb";
 
 const createLink = async (linkId: string,origUrl: string, shorUrl: string, counter:string, userId: string) => {
     await dynamodb.put({
@@ -34,5 +33,20 @@ const getAllLinks = async () => {
     return links
 }
 
+const updateLink = async (shortUrl: string, counter: string) => {
 
-export { createLink, getLink, getAllLinks};
+    const params = {
+        TableName: 'myTable',
+        Key: {
+            shortUrl: shortUrl,
+        },
+        UpdateExpression: 'set counter = :r',
+        ExpressionAttributeValues: {
+            ':r': counter,
+        },
+    };
+    const updatedLink = await dynamodb.update(params)
+    return updatedLink
+}
+
+export { createLink, getLink, getAllLinks,updateLink};

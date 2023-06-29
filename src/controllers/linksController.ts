@@ -27,7 +27,7 @@ class UserAuthController {
         try{
             const {url} = req.params
             const origUrl = await linksService.getUrl(url)
-            return res.json(origUrl)
+            res.redirect(origUrl)
         }catch (e) {
             next(e)
         }

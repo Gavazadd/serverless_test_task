@@ -47,12 +47,12 @@ resources:
       Properties:
         TableName: ${self:custom.linkTableName}
         AttributeDefinitions:
-          - AttributeName: linkId
+          - AttributeName: shortUrl
             AttributeType: S
-          - AttributeName: userId
+          - AttributeName: linkId
             AttributeType: S
         KeySchema:
-          - AttributeName: linkId
+          - AttributeName: shortUrl
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
@@ -60,7 +60,7 @@ resources:
         GlobalSecondaryIndexes:
           - IndexName: UserIndex
             KeySchema:
-              - AttributeName: userId
+              - AttributeName: linkId
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
