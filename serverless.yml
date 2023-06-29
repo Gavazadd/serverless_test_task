@@ -42,7 +42,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-
     LinksTable:
       Type: AWS::DynamoDB::Table
       Properties:

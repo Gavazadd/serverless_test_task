@@ -5,6 +5,7 @@ const REFRESH_SECRET: string = process.env.REFRESH_SECRET || "secretRefreshWord"
 const USERTABLENAME: string = process.env.USERTABLENAME || "users";
 const TOKENTABLENAME: string = process.env.TOKENTABLENAME || "tokens";
 const LINKTABLENAME: string = process.env.LINKTABLENAME || "links";
+const API_URL: string = process.env.API_URL || "https://wfwp1wpe3f.execute-api.us-east-1.amazonaws.com/dev/link/";
 
 export {
     PORT,
@@ -13,5 +14,6 @@ export {
     REFRESH_SECRET,
     USERTABLENAME,
     TOKENTABLENAME,
-    LINKTABLENAME
+    LINKTABLENAME,
+    API_URL
 };
