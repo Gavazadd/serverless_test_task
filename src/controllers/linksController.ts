@@ -6,8 +6,8 @@ class UserAuthController {
 
     async create(req: Request, res: Response, next: NextFunction) {
         try{
-            const {url, userId} = req.body
-            const userData = await linksService.create(url, userId)
+            const {url, userId, isOneTime, lifeDays} = req.body
+            const userData = await linksService.create(url, userId, isOneTime, lifeDays)
             return res.json(userData)
         }catch (e) {
             next(e)
@@ -27,18 +27,10 @@ class UserAuthController {
         try{
             const {url} = req.params
             const origUrl = await linksService.getUrl(url)
+            if (typeof (origUrl) === "object"){
+                res.json(origUrl)
+            }
             res.redirect(origUrl)
-        }catch (e) {
-            next(e)
-        }
-    }
-
-
-    async delete(req: Request, res: Response, next: NextFunction) {
-        try{
-            const {linkId} = req.params
-            const userData = await linksService.delete(linkId)
-            return res.json(userData)
         }catch (e) {
             next(e)
         }
