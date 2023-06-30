@@ -9,4 +9,6 @@ router.get('/', linksController.getAll);
 
 router.get('/:url', linksController.getUrl);
 
+router.delete('/:shortUrl', linksController.delete);
+
 export default router;
