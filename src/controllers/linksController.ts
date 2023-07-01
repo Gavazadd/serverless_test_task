@@ -1,11 +1,16 @@
 import {NextFunction, Request, Response} from "express";
-
+import {ApiError} from "../error";
+const {validationResult} = require('express-validator')
 const linksService = require('../services/linksService')
 
 class UserAuthController {
 
     async create(req: Request, res: Response, next: NextFunction) {
         try{
+            const errors = validationResult(req)
+            if (!errors.isEmpty()){
+                return res.status(400).json(new ApiError(errors.array()[0].msg, 400))
+            }
             const {refreshToken} = req.cookies
             const {url, isOneTime, lifeDays} = req.body
             const userData = await linksService.create(url, isOneTime, lifeDays, refreshToken)
