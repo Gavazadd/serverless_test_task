@@ -1,11 +1,13 @@
 import {NextFunction, Request, Response} from "express";
 import {validationResult} from "express-validator";
 import {ApiError} from "../error";
+import {ReqBodyInterface } from "../interfaces/reqBody.interface";
+import {UserBodyInterface } from "../interfaces/userBody.interface";
 
 const userService = require('../services/userAuthService')
 
 class UserAuthController {
-    async registration(req: Request, res: Response, next: NextFunction) {
+    async registration(req:  ReqBodyInterface<UserBodyInterface>, res: Response, next: NextFunction) {
         try{
             const errors = validationResult(req)
             if (!errors.isEmpty()){
@@ -20,7 +22,7 @@ class UserAuthController {
         }
     }
 
-    async login(req: Request, res: Response, next: NextFunction) {
+    async login(req: ReqBodyInterface<UserBodyInterface>, res: Response, next: NextFunction) {
         try{
             const {email, password} = req.body;
             const userData = await userService.login(email, password)

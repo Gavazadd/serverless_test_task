@@ -1,11 +1,13 @@
 import {NextFunction, Request, Response} from "express";
 import {ApiError} from "../error";
+import {ReqBodyInterface} from "../interfaces/reqBody.interface";
+import {LinkBodyInterface} from "../interfaces/linkBodyInterface";
 const {validationResult} = require('express-validator')
 const linksService = require('../services/linksService')
 
 class UserAuthController {
 
-    async create(req: Request, res: Response, next: NextFunction) {
+    async create(req: ReqBodyInterface<LinkBodyInterface>, res: Response, next: NextFunction) {
         try{
             const errors = validationResult(req)
             if (!errors.isEmpty()){
@@ -63,6 +65,5 @@ class UserAuthController {
     }
 
 }
-
 
 module.exports = new UserAuthController();
