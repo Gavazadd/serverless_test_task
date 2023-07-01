@@ -17,7 +17,7 @@ class UserService {
         if (!user){
             return new ApiError("Failed to create user, try again!", 400)
         }
-        const tokens = await this.writeTokensToDb(user.ID)
+        const tokens = await this.writeTokensToDb(user.ID, user.email)
         return tokens
     }
 
@@ -30,12 +30,12 @@ class UserService {
         if (!isPasswordEquals) {
             return new ApiError('Not valid password', 400);
         }
-        const tokens = await this.writeTokensToDb(user.ID)
+        const tokens = await this.writeTokensToDb(user.ID, user.email)
         return tokens
     }
 
-    async writeTokensToDb (id: string)  {
-        const generatedTokens = generateTokenPair({id: id})
+    async writeTokensToDb (id: string, email:string)  {
+        const generatedTokens = generateTokenPair({id: id, email:email})
         const createdTokens = await createTokens(id, generatedTokens.accessToken, generatedTokens.refreshToken)
         if (!createdTokens) {
             return new ApiError('Failed to create tokens, try again!', 400);

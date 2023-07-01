@@ -1,13 +1,21 @@
 import shortid from 'shortid';
 import {ApiError} from "../error";
 import {createLink, getAllLinks, getLink, deleteLink} from "../database/linkQueries";
+import {sendEmail} from "../ses/sendEmail"
 import {v4 as uuidv4} from "uuid";
 import {ScanCommandOutput} from "@aws-sdk/client-dynamodb";
 import {API_URL} from "../config/config";
 import {DeleteCommandOutput} from "@aws-sdk/lib-dynamodb/dist-types/commands";
+import {validateRefreshToken} from "./tokenService";
+import {JwtPayload} from "jsonwebtoken";
 
 class LinksService {
-    async create(origUrl: string, userId:string, isOneTime:boolean, lifeDays: string) {
+    async create(origUrl: string, isOneTime:boolean, lifeDays: string, refreshToken:string) {
+        const userData = validateRefreshToken(refreshToken);
+        if (!userData){
+            return new ApiError(`No valid refreshToken.`, 400)
+        }
+        const payload = userData as JwtPayload;
         const isOrigUrl = await this.isURL(origUrl)
         if (!isOrigUrl){
             return new ApiError('Entered string is not a link or has an incorrect format.', 400)
@@ -18,17 +26,22 @@ class LinksService {
 
         const linkId = uuidv4();
         const uniqueId: string = shortid.generate();
-        const shortenedUrl = await createLink(linkId, origUrl, uniqueId, '0', userId, isOneTime, futureDateTimestamp)
+        const shortenedUrl = await createLink(linkId, origUrl, uniqueId, '0', payload.id, isOneTime, futureDateTimestamp)
         return shortenedUrl
     }
-    async getAll (userId:string){
+    async getAll (refreshToken:string){
+        const userData = validateRefreshToken(refreshToken);
+        if (!userData){
+            return new ApiError(`No valid refreshToken.`, 400)
+        }
+        const payload = userData as JwtPayload;
         const shortenedUrl:ScanCommandOutput = await getAllLinks()
         let userUrls = []
         if (!shortenedUrl.Items || shortenedUrl.Items.length === 0){
             return new ApiError(`No items in table the "links"`, 400)
         }
         for (let item of shortenedUrl.Items){
-            if (item.userId.toString() === userId){
+            if (item.userId.toString() === payload.id){
                 userUrls.push(`${API_URL}`+ item['shortUrl'])
             }
         }
@@ -60,6 +73,15 @@ class LinksService {
     async delete(shortUrl: string) {
         const deletedLink :DeleteCommandOutput = await deleteLink(shortUrl)
         return deletedLink
+    }
+
+    async deleteTest(refreshToken: string) {
+        const userData = validateRefreshToken(refreshToken);
+        if (!userData){
+            return new ApiError(`No valid refreshToken.`, 400)
+        }
+        const payload = userData as JwtPayload;
+        return payload.id
     }
 
     async isURL(input: string) {

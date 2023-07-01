@@ -1,4 +1,4 @@
-import {sign} from "jsonwebtoken";
+import {sign, verify} from "jsonwebtoken";
 import {TokenPairInterface} from "../interfaces/tokenPair.interface";
 import {ACCESS_SECRET, REFRESH_SECRET} from "../config/config";
 interface payload {
@@ -10,5 +10,15 @@ const generateTokenPair = (payload: payload): TokenPairInterface => {
     return {accessToken, refreshToken};
 };
 
+const validateRefreshToken = (token:string) => {
+    try {
+        const userData = verify(token, REFRESH_SECRET)
+        return userData
+    } catch (e) {
+        return null
+    }
+};
 
-export {generateTokenPair};
+
+
+export {generateTokenPair, validateRefreshToken};

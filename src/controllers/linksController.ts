@@ -6,8 +6,9 @@ class UserAuthController {
 
     async create(req: Request, res: Response, next: NextFunction) {
         try{
-            const {url, userId, isOneTime, lifeDays} = req.body
-            const userData = await linksService.create(url, userId,isOneTime, lifeDays)
+            const {refreshToken} = req.cookies
+            const {url, isOneTime, lifeDays} = req.body
+            const userData = await linksService.create(url, isOneTime, lifeDays, refreshToken)
             return res.json(userData)
         }catch (e) {
             next(e)
@@ -15,8 +16,8 @@ class UserAuthController {
     }
     async getAll(req: Request, res: Response, next: NextFunction) {
         try{
-            const {userId} = req.query
-            const userData = await linksService.getAll(userId)
+            const {refreshToken} = req.cookies
+            const userData = await linksService.getAll(refreshToken)
             res.json(userData)
         }catch (e) {
             next(e)
@@ -46,6 +47,16 @@ class UserAuthController {
             next(e)
         }
     }
+    async deleteTest(req: Request, res: Response, next: NextFunction) {
+        try{
+            const {refreshToken} = req.cookies
+            const userData = await linksService.deleteTest(refreshToken)
+            return res.json(userData)
+        }catch (e) {
+            next(e)
+        }
+    }
+
 }
 
 
