@@ -11,6 +11,8 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:*
+        - ses:*
+        - sqs:*
       Resource: '*'
 
 custom:
@@ -29,6 +31,12 @@ functions:
 
 resources:
   Resources:
+    YourQueueName:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ServerlessTest
+        VisibilityTimeout: 30
+        MessageRetentionPeriod: 1209600
     UserTable:
       Type: AWS::DynamoDB::Table
       Properties:

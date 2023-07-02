@@ -16,6 +16,10 @@ router.get('/:url', linksController.getUrl);
 
 router.delete('/:shortUrl', linksController.delete);
 
-router.delete('/', linksController.deleteTest);
+router.post('/testing1', linksController.deleteTest);
+
+router.post('/testing12', linksController.deleteTest2);
+
+router.post('/testing123', linksController.deleteTest3);
 
 export default router;

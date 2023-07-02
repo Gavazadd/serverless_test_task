@@ -1,7 +1,7 @@
 import shortid from 'shortid';
 import {ApiError} from "../error";
 import {createLink, getAllLinks, getLink, deleteLink} from "../database/linkQueries";
-import {sendEmail} from "../ses/sendEmail"
+// import ses from '../ses/ses'
 import {v4 as uuidv4} from "uuid";
 import {ScanCommandOutput} from "@aws-sdk/client-dynamodb";
 import {API_URL} from "../config/config";
@@ -75,14 +75,8 @@ class LinksService {
         return deletedLink
     }
 
-    async deleteTest(refreshToken: string) {
-        const userData = validateRefreshToken(refreshToken);
-        if (!userData){
-            return new ApiError(`No valid refreshToken.`, 400)
-        }
-        const payload = userData as JwtPayload;
-        return payload.id
-    }
+    // async deleteTest( to:string, subject:string, message:string) {
+    // }
 
     async isURL(input: string) {
         try {
