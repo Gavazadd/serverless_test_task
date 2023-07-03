@@ -1,7 +1,6 @@
 import shortid from 'shortid';
 import {ApiError} from "../error";
 import {createLink, getAllLinks, getLink, deleteLink} from "../database/linkQueries";
-// import ses from '../ses/ses'
 import {v4 as uuidv4} from "uuid";
 import {ScanCommandOutput} from "@aws-sdk/client-dynamodb";
 import {API_URL} from "../config/config";
@@ -74,9 +73,6 @@ class LinksService {
         const deletedLink :DeleteCommandOutput = await deleteLink(shortUrl)
         return deletedLink
     }
-
-    // async deleteTest( to:string, subject:string, message:string) {
-    // }
 
     async isURL(input: string) {
         try {
