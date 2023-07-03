@@ -14,15 +14,15 @@ const createUser = async (id: string, email: string, password: string) => {
     return createdUser
 };
 
-// const getUserById = async (id: string) => {
-//     const { Item } = await dynamodb.get({
-//         TableName: USERTABLENAME,
-//         Key: {
-//             "ID": id
-//         }
-//     });
-//     return Item;
-// };
+const getUserById = async (id: string) => {
+    const { Item } = await dynamodb.get({
+        TableName: USERTABLENAME,
+        Key: {
+            "ID": id
+        }
+    });
+    return Item;
+};
 
 const getUserByEmail = async (email: string) => {
     const { Item } = await dynamodb.get({
@@ -34,4 +34,4 @@ const getUserByEmail = async (email: string) => {
     return Item;
 };
 
-export { createUser, getUserByEmail};
+export { createUser, getUserByEmail, getUserById};

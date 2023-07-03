@@ -22,7 +22,9 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     res.status(err.status || 500).send();
 });
 
+
 app.listen(PORT, async () => {
     console.log("Server is listening port: 5000");
 });
+
 export const handler: serverless.Handler = serverless(app);

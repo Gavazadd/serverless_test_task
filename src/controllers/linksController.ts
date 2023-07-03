@@ -2,9 +2,10 @@ import {NextFunction, Request, Response} from "express";
 import {ApiError} from "../error";
 import {ReqBodyInterface} from "../interfaces/reqBody.interface";
 import {LinkBodyInterface} from "../interfaces/linkBodyInterface";
-import {sendEmail} from "../ses/ses";
-import sqs from "../sqs/sqs";
-import sqsService from "../sqs/sqsService";
+import {deactivateAllExpired, getAllLinks} from "../database/linkQueries";
+// import {sendEmail} from "../ses/ses";
+// import sqs from "../sqs/sqs";
+// import sqsService from "../sqs/sqsService";
 const {validationResult} = require('express-validator')
 const linksService = require('../services/linksService')
 
@@ -59,35 +60,38 @@ class UserAuthController {
     }
     async deleteTest(req: Request, res: Response, next: NextFunction) {
         try {
-            const { to, subject, message } = req.body;
-
-            const params = {
-                MessageBody: JSON.stringify({ to, subject, message }),
-                QueueUrl: 'https://sqs.us-east-1.amazonaws.com/793279027259/ServerlessTest'
-            };
-
-            await sqs.sendMessage(params).promise();
-            res.json({ message: 'Email added to the queue' });
+            const currentDate =  Date.now();
+            const expiredLinks = await deactivateAllExpired(currentDate)
+            const expriredLINKS = []
+            const allLinks = await getAllLinks()
+            if (allLinks.Items !== undefined ){
+                for (const link of allLinks.Items){
+                    if (Number(link.lifeDays) < currentDate){
+                        expriredLINKS.push(link)
+                    }
+                }
+            }
+            res.json([expriredLINKS, expiredLinks]);
         } catch (error) {
             console.error('Error sending message to the queue:', error);
             res.status(500).json({ error });
         }
     }
-
-    async deleteTest2(req: Request, res: Response, next: NextFunction) {
-        try{
-            const { to, subject, message } = req.body;
-            await sendEmail(to, subject, message);
-            return res.json({ message: 'Email sent successfully' });
-        }catch (e) {
-            res.status(500).json({ e });
-        }
-    }
-
-    async deleteTest3(req: Request, res: Response, next: NextFunction) {
-        const result = await sqsService()
-        res.json(result)
-    }
+    //
+    // async deleteTest2(req: Request, res: Response, next: NextFunction) {
+    //     try{
+    //         const { to, subject, message } = req.body;
+    //         await sendEmail(to, subject, message);
+    //         return res.json({ message: 'Email sent successfully' });
+    //     }catch (e) {
+    //         res.status(500).json({ e });
+    //     }
+    // }
+    //
+    // async deleteTest3(req: Request, res: Response, next: NextFunction) {
+    //     const result = await sqsService()
+    //     res.json(result)
+    // }
 }
 
 module.exports = new UserAuthController();

@@ -13,7 +13,7 @@ const createLink = async (linkId: string,origUrl: string, shorUrl: string, count
             counter: counter,
             userId: userId,
             isOneTime: isOneTime,
-            lifeDays: lifeDays
+            lifeDays: lifeDays,
         }
     });
     const createdLink = await getLink(shorUrl)
@@ -47,4 +47,13 @@ const deleteLink = async (shortUrl: string) => {
     return deletedLink;
 };
 
-export { createLink, getLink, getAllLinks, deleteLink};
+const deactivateAllExpired = async (date: number) => {
+    const scanResult = await dynamodb.scan({
+        TableName: LINKTABLENAME,
+        FilterExpression: "lifeDays < :lifeDaysValue",
+        ExpressionAttributeValues: {":lifeDaysValue": date},
+    })
+    return scanResult
+};
+
+export { createLink, getLink, getAllLinks, deleteLink, deactivateAllExpired};
