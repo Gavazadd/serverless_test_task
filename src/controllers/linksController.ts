@@ -3,6 +3,7 @@ import {ApiError} from "../error";
 import {ReqBodyInterface} from "../interfaces/reqBody.interface";
 import {LinkBodyInterface} from "../interfaces/linkBodyInterface";
 import {deactivateAllExpired, getAllLinks} from "../database/linkQueries";
+import {getUserById} from "../database/userQueries";
 const {validationResult} = require('express-validator')
 const linksService = require('../services/linksService')
 
@@ -57,18 +58,9 @@ class UserAuthController {
     }
     async deleteTest(req: Request, res: Response, next: NextFunction) {
         try {
-            const currentDate =  Date.now();
-            const expiredLinks = await deactivateAllExpired(currentDate)
-            const expriredLINKS = []
-            const allLinks = await getAllLinks()
-            if (allLinks.Items !== undefined ){
-                for (const link of allLinks.Items){
-                    if (Number(link.lifeDays) < currentDate){
-                        expriredLINKS.push(link)
-                    }
-                }
-            }
-            res.json([expriredLINKS, expiredLinks]);
+            const {userId} = req.body
+            const currentDate = await getUserById( userId)
+            res.json(currentDate);
         } catch (error) {
             res.status(500).json({ error });
         }

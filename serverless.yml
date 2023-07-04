@@ -48,7 +48,7 @@ resources:
         AttributeDefinitions:
           - AttributeName: email
             AttributeType: S
-          - AttributeName: userId
+          - AttributeName: ID
             AttributeType: S
         KeySchema:
           - AttributeName: email
@@ -57,9 +57,9 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: userIdIndex
+          - IndexName: IdIndex
             KeySchema:
-              - AttributeName: userId
+              - AttributeName: ID
                 KeyType: HASH
             Projection:
               ProjectionType: ALL

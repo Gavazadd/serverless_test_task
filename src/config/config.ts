@@ -7,7 +7,7 @@ const TOKENTABLENAME: string = process.env.TOKENTABLENAME || "tokens";
 const LINKTABLENAME: string = process.env.LINKTABLENAME || "links";
 const API_URL: string = process.env.API_URL || "https://wfwp1wpe3f.execute-api.us-east-1.amazonaws.com/dev/link/";
 
-const QUEUELINK: string = process.env.QUEUELINK || "https://sqs.us-east-1.amazonaws.com/793279027259/ServerlessTest";
+const QUEUE_LINK: string = process.env.QUEUE_LINK || "https://sqs.us-east-1.amazonaws.com/793279027259/ServerlessTest";
 export {
     PORT,
     AWS_REGION,
@@ -17,5 +17,5 @@ export {
     TOKENTABLENAME,
     LINKTABLENAME,
     API_URL,
-    QUEUELINK
+    QUEUE_LINK
 };

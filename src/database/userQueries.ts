@@ -15,13 +15,15 @@ const createUser = async (id: string, email: string, password: string) => {
 };
 
 const getUserById = async (id: string) => {
-    const { Item } = await dynamodb.get({
+    const { Items } = await dynamodb.query({
         TableName: USERTABLENAME,
-        Key: {
-            "ID": id
+        IndexName: "IdIndex",
+        KeyConditionExpression: "ID = :IDValue",
+        ExpressionAttributeValues: {
+            ":IDValue": id
         }
     });
-    return Item;
+    return  Items?.[0]
 };
 
 const getUserByEmail = async (email: string) => {

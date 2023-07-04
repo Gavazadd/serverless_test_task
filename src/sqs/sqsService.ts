@@ -1,11 +1,9 @@
-import {AWSError, SQS} from "aws-sdk";
+import { SQS} from "aws-sdk";
 import {Message} from "aws-sdk/clients/sqs";
-import {PromiseResult} from "aws-sdk/lib/request";
 
 import {getUserById} from "../database/userQueries";
 import {sendEmail} from "../ses/ses";
-import {API_URL, QUEUELINK} from "../config/config";
-import {DeleteCommandOutput} from "@aws-sdk/lib-dynamodb/dist-types/commands";
+import {API_URL, QUEUE_LINK} from "../config/config";
 import {deleteLink} from "../database/linkQueries";
 
 
@@ -13,7 +11,7 @@ const sqs = new SQS();
 
 const sqsService = async (expiredLinks: any) => {
     try {
-        const queueUrl = QUEUELINK;
+        const queueUrl = QUEUE_LINK;
         for (const expiredLink of expiredLinks) {
             await sqs.sendMessage({
                 MessageBody: JSON.stringify(expiredLink),
@@ -42,9 +40,9 @@ const sqsService = async (expiredLinks: any) => {
             const emailPromises: Promise<void>[] = expiredLinks.map(async (message: Message) => {
                 if (message.Body && message.ReceiptHandle) {
                     const expLink = JSON.parse(message.Body);
-                    await sendEmail('gavazadd@gmail.com','testing in if', `${[allMessages.length, JSON.stringify(expLink)]}`)
                     const {userId, shortUrl} = expLink;
-                    const user = await getUserById(userId);
+                    const user = await getUserById(userId)
+                    console.log(user)
                     await sendEmail('gavazadd@gmail.com','testing user', `${[allMessages.length, JSON.stringify(user)]}`)
                     if (user) {
                         return sendEmail(
