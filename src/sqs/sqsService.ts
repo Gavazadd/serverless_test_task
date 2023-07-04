@@ -34,8 +34,8 @@ const sqsService = async (expiredLinks: any) => {
             }
         } while (response.Messages && response.Messages.length);
 
-        while (allMessages.length >= 2) {
-            const expiredLinks: Message[] = allMessages.slice(0, 2);
+        while (allMessages.length >= 10) {
+            const expiredLinks: Message[] = allMessages.slice(0, 10);
             const emailPromises: Promise<void>[] = expiredLinks.map(async (message: Message) => {
                 if (message.Body && message.ReceiptHandle) {
                     const expLink = JSON.parse(message.Body);
@@ -62,7 +62,7 @@ const sqsService = async (expiredLinks: any) => {
 
             }
 
-            allMessages.splice(0, 2);
+            allMessages.splice(0, 10);
         }
 
         return {status: 200, message: "All messages sent successfully"};
