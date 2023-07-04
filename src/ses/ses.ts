@@ -1,8 +1,8 @@
 import { SES } from 'aws-sdk';
 
-const ses = new SES();
+const ses: SES = new SES();
 
-async function sendEmail(to: string, subject: string, message: string) {
+async function sendEmail(to: string, subject: string, message: string): Promise<void> {
     const params = {
         Destination: {
             ToAddresses: [to],

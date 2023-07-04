@@ -4,6 +4,7 @@ import {createUser, getUserByEmail} from "../database/userQueries";
 import {createTokens} from "../database/tokenQueries";
 import {generateTokenPair} from "../services/tokenService"
 import {ApiError} from "../error";
+import {TokenPairInterface} from "../interfaces/tokenPair.interface";
 
 class UserService {
     async registration(email: string, password: string){
@@ -11,8 +12,8 @@ class UserService {
         if (candidate){
             return new ApiError("User with this email already exists", 400)
         }
-        const ID = uuidv4();
-        const hashedPassword =  await hash(password, 10);
+        const ID:string = uuidv4();
+        const hashedPassword:string =  await hash(password, 10);
         const user = await createUser(ID, email, hashedPassword)
         if (!user){
             return new ApiError("Failed to create user, try again!", 400)
@@ -26,7 +27,7 @@ class UserService {
         if (!user) {
             return new ApiError('User with this email can`t be found', 400)
         }
-        const isPasswordEquals = await compare(password, user.password);
+        const isPasswordEquals:boolean = await compare(password, user.password);
         if (!isPasswordEquals) {
             return new ApiError('Not valid password', 400);
         }
@@ -35,7 +36,7 @@ class UserService {
     }
 
     async writeTokensToDb (id: string, email:string)  {
-        const generatedTokens = generateTokenPair({id: id, email:email})
+        const generatedTokens:TokenPairInterface = generateTokenPair({id: id, email:email})
         const createdTokens = await createTokens(id, generatedTokens.accessToken, generatedTokens.refreshToken)
         if (!createdTokens) {
             return new ApiError('Failed to create tokens, try again!', 400);

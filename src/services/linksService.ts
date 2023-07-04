@@ -10,32 +10,32 @@ import {JwtPayload} from "jsonwebtoken";
 
 class LinksService {
     async create(origUrl: string, isOneTime:boolean, lifeDays: string, refreshToken:string) {
-        const userData = validateRefreshToken(refreshToken);
+        const userData: string|JwtPayload|ApiError = validateRefreshToken(refreshToken);
         if (!userData){
             return new ApiError(`No valid refreshToken.`, 400)
         }
-        const payload = userData as JwtPayload;
-        const isOrigUrl = await this.isURL(origUrl)
+        const payload:JwtPayload = userData as JwtPayload;
+        const isOrigUrl:boolean = await this.isURL(origUrl)
         if (!isOrigUrl){
             return new ApiError('Entered string is not a link or has an incorrect format.', 400)
         }
-        const futureDate = new Date();
+        const futureDate:Date = new Date();
         futureDate.setDate(futureDate.getDate() + Number(lifeDays));
-        const futureDateTimestamp = futureDate.getTime().toString()
+        const futureDateTimestamp:string = futureDate.getTime().toString()
 
-        const linkId = uuidv4();
+        const linkId:string = uuidv4();
         const uniqueId: string = shortid.generate();
         const shortenedUrl = await createLink(linkId, origUrl, uniqueId, '0', payload.id, isOneTime, futureDateTimestamp)
         return shortenedUrl
     }
-    async getAll (refreshToken:string){
-        const userData = validateRefreshToken(refreshToken);
+    async getAll (refreshToken:string):Promise<any[] | ApiError>{
+        const userData: string|JwtPayload|ApiError = validateRefreshToken(refreshToken);
         if (!userData){
             return new ApiError(`No valid refreshToken.`, 400)
         }
-        const payload = userData as JwtPayload;
+        const payload: JwtPayload = userData as JwtPayload;
         const shortenedUrl:ScanCommandOutput = await getAllLinks()
-        let userUrls = []
+        let userUrls: any[] = []
         if (!shortenedUrl.Items || shortenedUrl.Items.length === 0){
             return new ApiError(`No items in table the "links"`, 400)
         }
@@ -50,7 +50,7 @@ class LinksService {
         return userUrls
     }
 
-    async getUrl(shortUrl:string){
+    async getUrl(shortUrl:string): Promise<any>{
         const urlItem = await getLink(shortUrl)
         if (!urlItem){
             return new ApiError(`This link is not available"`, 400)
@@ -59,22 +59,22 @@ class LinksService {
             await this.delete(urlItem['shortUrl'])
             return urlItem.origUrl
         }
-        const currentDate = new Date().getTime().toString();
+        const currentDate:string = new Date().getTime().toString();
         if (urlItem.lifeDays < currentDate){
             await this.delete(urlItem['shortUrl'])
             return new ApiError(`Life period of this link has been expired.`, 400)
         }
-        const counter = Number(urlItem['counter']) + 1
+        const counter:number = Number(urlItem['counter']) + 1
         await  createLink(urlItem['linkId'], urlItem['origUrl'],urlItem['shortUrl'], `${counter}`, urlItem['userId'], urlItem['isOneTime'], urlItem['lifeDays'] )
         return urlItem.origUrl
     }
 
-    async delete(shortUrl: string) {
+    async delete(shortUrl: string): Promise<DeleteCommandOutput> {
         const deletedLink :DeleteCommandOutput = await deleteLink(shortUrl)
         return deletedLink
     }
 
-    async isURL(input: string) {
+    async isURL(input: string): Promise<boolean> {
         try {
             const parsedUrl: URL = new URL(input);
             return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';

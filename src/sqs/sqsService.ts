@@ -1,6 +1,5 @@
 import { SQS} from "aws-sdk";
 import {Message} from "aws-sdk/clients/sqs";
-
 import {getUserById} from "../database/userQueries";
 import {sendEmail} from "../ses/ses";
 import {API_URL, QUEUE_LINK} from "../config/config";
@@ -42,10 +41,8 @@ const sqsService = async (expiredLinks: any) => {
                     const expLink = JSON.parse(message.Body);
                     const {userId, shortUrl} = expLink;
                     const user = await getUserById(userId)
-                    console.log(user)
-                    await sendEmail('gavazadd@gmail.com','testing user', `${[allMessages.length, JSON.stringify(user)]}`)
                     if (user) {
-                        return sendEmail(
+                        await sendEmail(
                             user.email,
                             "Deactivated link",
                             `Your link ${API_URL}/${shortUrl} has been deactivated`

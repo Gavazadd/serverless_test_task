@@ -1,13 +1,13 @@
 import serverless from "serverless-http";
-import {deactivateAllExpired, getAllLinks} from "../database/linkQueries";
-import {sendEmail} from "../ses/ses";
+import { getAllLinks} from "../database/linkQueries";
 import {sqsService} from "../sqs/sqsService";
+import {ScanCommandOutput} from "@aws-sdk/client-dynamodb";
 
 const deactivateExpired = async () => {
     try {
-        const currentDate =  Date.now();
-        const expriredLINKS = []
-        const allLinks = await getAllLinks()
+        const currentDate:number =  Date.now();
+        const expriredLINKS:any[] = []
+        const allLinks: ScanCommandOutput = await getAllLinks()
         if (allLinks.Items !== undefined ){
             for (const link of allLinks.Items){
                 if (Number(link.lifeDays) < currentDate){
@@ -15,7 +15,6 @@ const deactivateExpired = async () => {
                 }
             }
         }
-
         await sqsService(expriredLINKS);
     } catch (e: any) {
         return {
@@ -29,4 +28,4 @@ const deactivateExpired = async () => {
     }
 };
 
-export const handler = serverless(deactivateExpired);
+export const handler: serverless.Handler = serverless(deactivateExpired);

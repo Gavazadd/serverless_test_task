@@ -3,7 +3,7 @@ import {LINKTABLENAME} from "../config/config";
 import {DeleteCommandOutput} from "@aws-sdk/lib-dynamodb/dist-types/commands";
 import {ScanCommandOutput} from "@aws-sdk/client-dynamodb";
 
-const createLink = async (linkId: string,origUrl: string, shorUrl: string, counter:string, userId: string, isOneTime:boolean, lifeDays:string) => {
+const createLink = async (linkId: string,origUrl: string, shorUrl: string, counter:string, userId: string, isOneTime:boolean, lifeDays:string):Promise<Record<string, any>|undefined> => {
     await dynamodb.put({
         TableName: LINKTABLENAME,
         Item: {
@@ -16,7 +16,7 @@ const createLink = async (linkId: string,origUrl: string, shorUrl: string, count
             lifeDays: lifeDays,
         }
     });
-    const createdLink = await getLink(shorUrl)
+    const createdLink:Record<string, any>|undefined = await getLink(shorUrl)
     return createdLink
 };
 
@@ -30,7 +30,7 @@ const getLink = async (shortUrl: string) => {
     return Item;
 };
 
-const getAllLinks = async () => {
+const getAllLinks = async ():Promise<ScanCommandOutput> => {
     const links: ScanCommandOutput = await dynamodb.scan({
         TableName: LINKTABLENAME
     })
@@ -47,8 +47,8 @@ const deleteLink = async (shortUrl: string) => {
     return deletedLink;
 };
 
-const deactivateAllExpired = async (date: number) => {
-    const scanResult = await dynamodb.scan({
+const deactivateAllExpired = async (date: number):Promise<ScanCommandOutput> => {
+    const scanResult: ScanCommandOutput = await dynamodb.scan({
         TableName: LINKTABLENAME,
         FilterExpression: "lifeDays < :lifeDaysValue",
         ExpressionAttributeValues: {":lifeDaysValue": date},

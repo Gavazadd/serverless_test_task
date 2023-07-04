@@ -2,8 +2,6 @@ import {NextFunction, Request, Response} from "express";
 import {ApiError} from "../error";
 import {ReqBodyInterface} from "../interfaces/reqBody.interface";
 import {LinkBodyInterface} from "../interfaces/linkBodyInterface";
-import {deactivateAllExpired, getAllLinks} from "../database/linkQueries";
-import {getUserById} from "../database/userQueries";
 const {validationResult} = require('express-validator')
 const linksService = require('../services/linksService')
 
@@ -23,7 +21,7 @@ class UserAuthController {
             next(e)
         }
     }
-    async getAll(req: Request, res: Response, next: NextFunction) {
+    async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try{
             const {refreshToken} = req.cookies
             const userData = await linksService.getAll(refreshToken)
@@ -33,7 +31,7 @@ class UserAuthController {
         }
     }
 
-    async getUrl(req: Request, res: Response, next: NextFunction) {
+    async getUrl(req: Request, res: Response, next: NextFunction):Promise<void> {
         try{
             const {url} = req.params
             const origUrl = await linksService.getUrl(url)
