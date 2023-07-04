@@ -56,15 +56,6 @@ class UserAuthController {
             next(e)
         }
     }
-    async deleteTest(req: Request, res: Response, next: NextFunction) {
-        try {
-            const {userId} = req.body
-            const currentDate = await getUserById( userId)
-            res.json(currentDate);
-        } catch (error) {
-            res.status(500).json({ error });
-        }
-    }
 }
 
 module.exports = new UserAuthController();

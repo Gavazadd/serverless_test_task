@@ -18,6 +18,4 @@ router.get('/:url', authMiddleware, linksController.getUrl);
 
 router.delete('/:shortUrl', authMiddleware, linksController.delete);
 
-router.post('/testing1', authMiddleware, linksController.deleteTest);
-
 export default router;
